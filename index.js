@@ -2,7 +2,7 @@ class ProductManager {
     constructor() {
       this.products = []
     }
-    addProduct(title, code, description, price, tbumbnail, stock) {
+    addProduct(title, code, description, price, thumbnail, stock) {
       let newProduct = {
         title: title,
         code: code,
