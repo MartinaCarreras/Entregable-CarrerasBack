@@ -1,0 +1,40 @@
+<h1>Lista de productos</h1>
+{{#if new}} <h1>¡Hay nuevos productos!</h1> {{/if}}
+<div>
+    {{#each data}}
+        <div style="width: 300px; background-color: #68a35dda;">
+            <h6>Nombre del producto: {{title}}</h6>
+            <p>ID del producto: {{id}}</p>
+            <p>Precio del producto: {{price}}</p>
+            <p>Descripción del producto: {{description}}</p>
+        </div>
+    {{/each}}
+</div>
+<br>
+<h1>Crear un nuevo producto</h1>
+    <form id="form">
+        <input type="text" name="title" id="title" placeholder="Title">
+        <input type="text" name="code" id="code" placeholder="code">
+        <input type="text" name="description" id="description" placeholder="Description">
+        <input type="number" name="price" id="price" placeholder="price">
+        <input type="text" name="thumbnail" id="thumbnail" placeholder="thumbnail">
+        <input type="number" name="stock" id="stock" placeholder="stock">
+        <input type="text" name="category" id="category" placeholder="category">
+        <input type="submit" value="Añadir">
+    </form>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socketClient = io();
+    document.getElementById('form').addEventListener('submit', ()=> {
+        const labels = ['title', 'code', 'description', 'price', 'thumbnail', 'stock', 'category'];
+        let product = {}
+        labels.forEach((label)=> {
+            product = {...product, [label]: document.getElementById(`${label}`).value};
+        })
+        if (Object.values(product).includes(undefined) == false) {
+            socketClient.emit('newProduct', product);
+            console.log('Producto enviado');
+        }
+    })
+
+</script>

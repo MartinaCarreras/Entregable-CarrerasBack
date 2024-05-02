@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Crear un nuevo producto</h1>
+    <form action="/api/products" method="post">
+        <input type="text" name="title" id="title" placeholder="Title">
+        <input type="text" name="code" id="code" placeholder="code">
+        <input type="text" name="description" id="description" placeholder="Description">
+        <input type="number" name="price" id="price" placeholder="price">
+        <input type="text" name="thumbnail" id="thumbnail" placeholder="thumbnail">
+        <input type="number" name="stock" id="stock" placeholder="stock">
+        <input type="text" name="category" id="category" placeholder="category">
+        <input type="submit" value="Cargar">
+    </form>
+</body>
+</html>
