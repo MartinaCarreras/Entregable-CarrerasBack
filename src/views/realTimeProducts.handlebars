@@ -1,40 +1,80 @@
 <h1>Lista de productos</h1>
-{{#if new}} <h1>¡Hay nuevos productos!</h1> {{/if}}
-<div>
+<div class="conteiner">
     {{#each data}}
-        <div style="width: 300px; background-color: #68a35dda;">
-            <h6>Nombre del producto: {{title}}</h6>
-            <p>ID del producto: {{id}}</p>
-            <p>Precio del producto: {{price}}</p>
-            <p>Descripción del producto: {{description}}</p>
+        <div style="width: 300px; background-color: #68a35dda;" id={{id}}>
+            <p>title: {{title}}</p>
+            <p>id: {{id}}</p>
+            <p>price: {{price}}</p>
+            <p>description: {{description}}</p>
         </div>
     {{/each}}
 </div>
 <br>
 <h1>Crear un nuevo producto</h1>
-    <form id="form">
-        <input type="text" name="title" id="title" placeholder="Title">
-        <input type="text" name="code" id="code" placeholder="code">
-        <input type="text" name="description" id="description" placeholder="Description">
-        <input type="number" name="price" id="price" placeholder="price">
-        <input type="text" name="thumbnail" id="thumbnail" placeholder="thumbnail">
-        <input type="number" name="stock" id="stock" placeholder="stock">
-        <input type="text" name="category" id="category" placeholder="category">
-        <input type="submit" value="Añadir">
-    </form>
+<form action="/realtimeproducts" method="post" id="form1">
+    <input type="text" name="title" id="title" placeholder="Title">
+    <input type="text" name="code" id="code" placeholder="code">
+    <input type="text" name="description" id="description" placeholder="Description">
+    <input type="number" name="price" id="price" placeholder="price">
+    <input type="text" name="thumbnail" id="thumbnail" placeholder="thumbnail">
+    <input type="number" name="stock" id="stock" placeholder="stock">
+    <input type="text" name="category" id="category" placeholder="category">
+    <input type="submit" value="Añadir">
+</form>
+<h2>Eliminar producto</h2>
+<form id="delete">
+    <input type="text" id="idProducto" placeholder="ingrede el id del producto">
+    <input type="submit" value="Eliminar">
+</form>
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socketClient = io();
-    document.getElementById('form').addEventListener('submit', ()=> {
-        const labels = ['title', 'code', 'description', 'price', 'thumbnail', 'stock', 'category'];
-        let product = {}
+    const labels = ['title', 'code', 'description', 'price', 'thumbnail', 'stock', 'category'];
+    let product = {}
+    document.getElementById('form1').addEventListener('submit', ()=> {
         labels.forEach((label)=> {
             product = {...product, [label]: document.getElementById(`${label}`).value};
         })
         if (Object.values(product).includes(undefined) == false) {
-            socketClient.emit('newProduct', product);
+            socketClient.emit('newProduct', {type: 'add', data: product});
             console.log('Producto enviado');
         }
+        document.getElementById('form1').reset();
+    })
+
+    document.getElementById('delete').addEventListener('submit', (event)=>{
+        event.preventDefault();
+        let id = document.getElementById('idProducto');
+        socketClient.emit('newProduct', {type: 'delete', data: id.value});
+        id.innerHTML = '';
+    })
+
+    socketClient.on('Product', id=>{
+        console.log('Inicia el delete')
+        let contenedor = document.querySelector(".conteiner");
+        let div = document.createElement('div')
+        console.log(contenedor)
+        let labels2 = ['title', 'id', 'price', 'description'];
+        labels2.forEach((label)=> {
+            let parrafo = document.createElement('p')
+            if (label == 'id') {
+            parrafo.innerHTML = `id: ${id}`;
+            }else {
+            parrafo.innerHTML = `${label}: ${product[label]}`;
+            }
+            div.append(parrafo);
+            div.setAttribute('style', 'width: 300px; background-color: #68a35dda;')
+            div.setAttribute('id', `${id}`)
+        })
+        contenedor.append(div);
+    })
+    
+    socketClient.on('recived', data=>{
+        console.log(data)
+        let cont = document.querySelector('.conteiner');
+        let div = document.getElementById(`${data}`)
+        console.log(div)
+        cont.removeChild(div);
     })
 
 </script>

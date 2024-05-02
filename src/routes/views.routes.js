@@ -13,10 +13,11 @@ router.get('/realtimeproducts', (req, res)=>{
     res.render('realTimeProducts', {data: tempManag.getProducts(0), new: false})
 })
 
-router.post('realtimeproducts', ( req, res )=> {
+router.post('/realtimeproducts', ( req, res )=> {
+    console.log('llega');
     const socketServer = req.app.get('socketServer');
-    tempManag.addProduct (req.body)
-    res.render('realTimeProducts', {data: tempManag.getProducts(0), new: true})
+    const tempManag = new ProductManager()
+    socketServer.emit('Product', tempManag.maxId(tempManag.products) + 1)
 })
 
 export default router

@@ -5,6 +5,7 @@ import ViewsRoutes from './routes/views.routes.js';
 import ProductRoutes from './routes/products.routes.js';
 import CartRoutes from './routes/carts.routes.js';
 import { config } from './config.js';
+import ProductManager from './managers/ProductManager.js';
 
 const app = express();
 
@@ -33,7 +34,12 @@ socketServer.on('connection', client =>{
     console.log(`Conectado id: ${client.id}`);
     
     client.on('newProduct', data=>{
-        console.log('Producto recibido');
-        console.log(data);
+        const tempManag = new ProductManager();
+        if (data.type == 'add') {
+            tempManag.addProduct(data.data);
+        } else {
+            tempManag.deleteProduct(data.data)
+            client.emit('recived', data.data)
+        }
     })
 })
