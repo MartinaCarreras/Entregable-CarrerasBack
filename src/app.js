@@ -32,14 +32,4 @@ app.set('socketServer', socketServer);
 
 socketServer.on('connection', client =>{
     console.log(`Conectado id: ${client.id}`);
-    
-    client.on('newProduct', data=>{
-        const tempManag = new ProductManager();
-        if (data.type == 'add') {
-            tempManag.addProduct(data.data);
-        } else {
-            tempManag.deleteProduct(data.data)
-            client.emit('recived', data.data)
-        }
-    })
 })

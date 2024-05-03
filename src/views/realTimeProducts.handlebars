@@ -2,16 +2,16 @@
 <div class="conteiner">
     {{#each data}}
         <div style="width: 300px; background-color: #68a35dda;" id={{id}}>
-            <p>title: {{title}}</p>
-            <p>id: {{id}}</p>
-            <p>price: {{price}}</p>
-            <p>description: {{description}}</p>
+            <h4>Nombre: {{title}}</h4>
+            <h6>Id: {{id}}</h6>
+            <h5>Precio: {{price}}</h5>
+            <p>Description: {{description}}</p>
         </div>
     {{/each}}
 </div>
 <br>
 <h1>Crear un nuevo producto</h1>
-<form action="/realtimeproducts" method="post" id="form1">
+<form action="/realtimeproducts" method="post" id="add">
     <input type="text" name="title" id="title" placeholder="Title">
     <input type="text" name="code" id="code" placeholder="code">
     <input type="text" name="description" id="description" placeholder="Description">
@@ -31,50 +31,83 @@
     const socketClient = io();
     const labels = ['title', 'code', 'description', 'price', 'thumbnail', 'stock', 'category'];
     let product = {}
-    document.getElementById('form1').addEventListener('submit', ()=> {
-        labels.forEach((label)=> {
-            product = {...product, [label]: document.getElementById(`${label}`).value};
-        })
-        if (Object.values(product).includes(undefined) == false) {
-            socketClient.emit('newProduct', {type: 'add', data: product});
-            console.log('Producto enviado');
-        }
-        document.getElementById('form1').reset();
-    })
+    let add = document.getElementById('add');
+    let deleteProduct = document.getElementById("delete");
 
-    document.getElementById('delete').addEventListener('submit', (event)=>{
+
+    //El evento de addProduct
+    add.addEventListener('submit', (event)=> {
         event.preventDefault();
-        let id = document.getElementById('idProducto');
-        socketClient.emit('newProduct', {type: 'delete', data: id.value});
-        id.innerHTML = '';
+        
+        labels.forEach(label=>{
+            product = { ...product, [label]: document.getElementById(`${label}`).value }
+        });
+
+        let body = {
+            type: "add",
+            content: product
+        }
+        let options = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+        }
+        fetch('/realtimeproducts', options);
+
+        add.reset(); 
     })
 
-    socketClient.on('Product', id=>{
-        console.log('Inicia el delete')
-        let contenedor = document.querySelector(".conteiner");
-        let div = document.createElement('div')
-        console.log(contenedor)
-        let labels2 = ['title', 'id', 'price', 'description'];
-        labels2.forEach((label)=> {
-            let parrafo = document.createElement('p')
-            if (label == 'id') {
-            parrafo.innerHTML = `id: ${id}`;
-            }else {
-            parrafo.innerHTML = `${label}: ${product[label]}`;
-            }
-            div.append(parrafo);
-            div.setAttribute('style', 'width: 300px; background-color: #68a35dda;')
-            div.setAttribute('id', `${id}`)
-        })
+
+    //El evento de deleteProduct
+
+    deleteProduct.addEventListener('submit', (event)=>{
+        event.preventDefault();
+
+        const id = document.getElementById('idProducto').value;
+
+        let body = {
+            type: 'delete',
+            content: id
+        }
+        let options = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+        }
+        fetch('/realtimeproducts', options);
+
+        deleteProduct.reset();
+    });
+
+    //Espera la emisión de addedProduct
+
+    socketClient.on('added', id=>{
+        const contenedor = document.querySelector('.conteiner');
+        const div = document.createElement('div');
+        const {title, price, description} = product;
+
+        div.innerHTML = `
+            <h4>Nombre: ${title}</h4>
+            <h6>Id: ${id}</h6>
+            <h5>Precio: ${price}</h5>
+            <p>Description: ${description}</p>
+        `;
+
+        div.setAttribute('style', 'width: 300px; background-color: #68a35dda;')
+        div.setAttribute('id', `${id}`)
         contenedor.append(div);
-    })
-    
-    socketClient.on('recived', data=>{
-        console.log(data)
+    });
+
+    //Espera la emisión de deletedProduct
+
+    socketClient.on('deleted', id=>{
+
         let cont = document.querySelector('.conteiner');
-        let div = document.getElementById(`${data}`)
+        let div = document.getElementById(`${id}`)
+        console.log(cont)
         console.log(div)
         cont.removeChild(div);
+
     })
 
 </script>

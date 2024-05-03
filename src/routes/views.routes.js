@@ -14,10 +14,21 @@ router.get('/realtimeproducts', (req, res)=>{
 })
 
 router.post('/realtimeproducts', ( req, res )=> {
-    console.log('llega');
+    
     const socketServer = req.app.get('socketServer');
     const tempManag = new ProductManager()
-    socketServer.emit('Product', tempManag.maxId(tempManag.products) + 1)
+    const {type, content} = req.body;
+
+    if (type == 'add') {
+
+        tempManag.addProduct(content);
+        socketServer.emit('added', tempManag.maxId(tempManag.products))
+
+    } else if (type == 'delete') {
+        tempManag.deleteProduct(content);
+        socketServer.emit('deleted', content);
+
+    }
 })
 
 export default router
