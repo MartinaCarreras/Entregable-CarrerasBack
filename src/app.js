@@ -5,7 +5,7 @@ import ViewsRoutes from './routes/views.routes.js';
 import ProductRoutes from './routes/products.routes.js';
 import CartRoutes from './routes/carts.routes.js';
 import { config } from './config.js';
-import ProductManager from './managers/ProductManager.js';
+import mongoose from 'mongoose';
 
 const app = express();
 
@@ -23,7 +23,8 @@ app.use('/api/carts', CartRoutes);
 app.use(express.static(`${config.DIRNAME}/public`));
 
 
-const httpServer = app.listen(config.PORT, ()=> {
+const httpServer = app.listen(config.PORT, async ()=> {
+    await mongoose.connect(config.MONGODB_URI);
     console.log(`Servidor iniciado en ${config.PORT}`);
 })
 

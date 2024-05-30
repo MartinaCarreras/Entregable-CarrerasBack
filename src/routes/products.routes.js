@@ -1,34 +1,40 @@
 import { Router } from "express";
-import productManager from '../managers/ProductManager.js'
+import ProductManager from "../dao/ProductManager.mdb.js";
+import model from "../dao/models/products.model.js";
 
-const newManager = new productManager();
+const newManager = new ProductManager(model);
 
 const router = Router();
 
-router.get('/', ( req, res )=>{
+router.get('/', async ( req, res )=>{
     if(req.query.limit){
-        res.status(200).send(newManager.getProducts(req.query.limit));
+        let products = await (newManager.getItems(req.query.limit));
+        res.status(200).send(products);
     }else{
-        res.status(200).send(newManager.getProducts(0))
+        let products = await (newManager.getItems(0));
+        res.status(200).send(products)
     }
 });
 
-router.post('/', ( req, res )=>{
-    newManager.addProduct(req.body);
-    res.status(200).send(newManager.getProducts(0))
+router.post('/', async ( req, res )=>{
+    await newManager.addItem(req.body);
+    let products = await (newManager.getItems(0));
+    res.status(200).send(products)
 })
 
-router.get('/:pid', ( req, res )=>{
-    res.status(200).send(newManager.getProductById(req.params.pid))
+router.get('/:pid', async ( req, res )=>{
+    let products = await newManager.getById(req.params.pid)
+    res.status(200).send(products);
 });
 
-router.put('/:pid', ( req, res )=>{
-    newManager.updateProduct(req.params.pid, req.body)
-    res.send(newManager.getProductById(req.params.pid));
+router.put('/:pid', async ( req, res )=>{
+    await newManager.updateItem(req.params.pid, req.body)
+    let products = await newManager.getById(req.params.pid)
+    res.send(products);
 });
 
-router.delete('/:pid', ( req, res )=>{
-    newManager.deleteProduct(req.params.pid);
+router.delete('/:pid', async ( req, res )=>{
+    await newManager.deleteItem(req.params.pid);
     res.status(200).send(`Has eliminado el producto con id ${req.params.pid}`)
 })
 
