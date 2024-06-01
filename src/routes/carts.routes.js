@@ -1,13 +1,14 @@
 import { Router } from "express";
 import CartManager from "../dao/CartManager.mdb.js";
 import cartModel from '../dao/models/carts.model.js'
+import Swal from "sweetalert2";
 
 const router = Router();
 const cartManager = new CartManager(cartModel);
 
 router.post('/', async ( req, res )=>{
-    await cartManager.CreateCart();
-    res.status(200).send('Has creado un carrito')
+    await cartManager.createCart();
+    res.status(200).send(`Has creado un carrito con id ${await cartManager.createCart()}`)
 });
 
 router.get('/:cid', async ( req, res )=>{

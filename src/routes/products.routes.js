@@ -7,13 +7,9 @@ const newManager = new ProductManager(model);
 const router = Router();
 
 router.get('/', async ( req, res )=>{
-    if(req.query.limit){
-        let products = await (newManager.getItems(req.query.limit));
-        res.status(200).send(products);
-    }else{
-        let products = await (newManager.getItems(0));
-        res.status(200).send(products)
-    }
+    const { limit, page, sort, query } = req.query;
+    let products = await newManager.getItems(limit, page, query, sort);
+    res.status(200).send({ status: 'success', payload: products});
 });
 
 router.post('/', async ( req, res )=>{

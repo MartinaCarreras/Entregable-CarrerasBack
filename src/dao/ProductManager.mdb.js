@@ -4,21 +4,35 @@ class MDBProductManager {
         this.model = model
     };
 
-    getItems = async ( limit ) => {
-        this.products = await this.model.find().lean();
-        if (limit != 0) {
-          try {
-            return (this.products.slice(0, +limit))
-          } catch (error) {
-            console.log( "Lo sentimos, ha ocurrido un error enviando la información que intentó capturar.");
-          }
-        } else {
-          try {
-            return this.products;
-          } catch (error) {
-            console.log( "Lo sentimos, ha ocurrido un error enviando la información que intentó capturar.");
-          }
+    getItems = async ( limit, page, query, sort ) => {
+      let realLimit, realPage, realSort, realQuery;
+      limit? realLimit = limit : realLimit = 10;
+      page? realPage = page : realPage = 1;
+      query? realQuery = query : realQuery = "none";
+      sort? realSort = sort : realSort = "none";
+      if(sort) {
+      } else {
+        realSort = 'none'
+      }
+      if (realSort == 'none') {
+        if (realQuery != 'none') {
+          this.products = await this.model.paginate({category: realQuery}, {limit: realLimit, page: realPage})
+        }else {
+          this.products = await this.model.paginate({}, {limit: realLimit, page: realPage})
         }
+      } else {
+        if (realQuery != 'none') {
+          this.products = await this.model.paginate({category: realQuery}, {limit: realLimit, page: realPage});
+        }else {
+          this.products = await this.model.paginate({}, {limit: realLimit, page: realPage});
+        }
+        if(realSort == 'asc') {
+          this.products.docs = await this.products.docs.sort((a,b) => a.price - b.price);
+        } else if (realSort == 'desc') {
+          this.products.docs = await this.products.docs.sort((a,b)=> b.price - a.price);
+        }
+      }
+      return this.products;
     };
 
     getById = async (pid) => {

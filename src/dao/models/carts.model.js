@@ -5,8 +5,8 @@ mongoose.pluralize(null);
 const collection = 'carts';
 
 const schema = new mongoose.Schema({
-    id: {type: String, required: true},
-    products: {type: Object, required: true}
+    id: {type: Number, required: true},
+    products: {type: [{_product_id: mongoose.Schema.Types.ObjectId, quantity: Number}], ref: 'products'}
 });
 
 const model = mongoose.model(collection, schema);
