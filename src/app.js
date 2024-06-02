@@ -6,6 +6,7 @@ import ProductRoutes from './routes/products.routes.js';
 import CartRoutes from './routes/carts.routes.js';
 import { config } from './config.js';
 import mongoose from 'mongoose';
+import innerSocket from './socket.js'
 
 const app = express();
 
@@ -28,9 +29,4 @@ const httpServer = app.listen(config.PORT, async ()=> {
     console.log(`Servidor iniciado en ${config.PORT}`);
 })
 
-const socketServer = new Server(httpServer);
-app.set('socketServer', socketServer);
-
-socketServer.on('connection', client =>{
-    console.log(`Conectado id: ${client.id}`);
-})
+app.set('socketServer', innerSocket(httpServer))

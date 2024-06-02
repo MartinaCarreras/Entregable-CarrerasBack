@@ -1,0 +1,50 @@
+
+
+
+<a href="{{prevLink}}"><button {{#if hasPrevPage}}{{else}} disabled {{/if}}>Pagina anterior</button></a>
+<div>{{page}} de {{totalPages}}</div>
+<a href="{{nextLink}}"><button {{#if hasNextPage}}{{else}} disabled {{/if}}>Pagina siguiente</button></a>
+
+<div style="display: flex; flex-wrap: wrap">
+    {{#each data}}
+            <div style="width: 300px; background-color: #68a35dda; margin: 10px; display: flex; flex-direction: column;" id={{_id}}>
+                <h6>Nombre del producto: {{title}}</h6>
+                <p>codigo: {{code}}</p>
+                <p>Descripción del producto: {{description}}</p>
+                <p>Precio del producto: {{price}}</p>
+                <p>ID del producto: {{_id}}</p>
+                <button class="add">Añadir a carrito</button>
+            </div>
+    {{/each}}
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    console.log({{page}})
+    const socketClient = io();
+
+    let add = document.querySelectorAll(".add");
+    add.forEach(adds=> {
+        adds.addEventListener('click', (event)=> {
+            const padre = event.target.parentElement;
+            const pid = padre.id;
+
+            let url = `/api/carts/${{{cid}}}/products/${{{pid}}}`
+            
+            let body = {
+            pid: pid,
+            cid: {{cid}}
+            }
+
+            let options = {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(body)
+            }
+
+            fetch(url, options);
+            console.log('producto añadido')
+        })
+    })
+
+
+</script>

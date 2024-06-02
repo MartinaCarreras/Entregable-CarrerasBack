@@ -1,0 +1,15 @@
+
+<div style="display: flex; flex-wrap: wrap">
+    {{#each data}}
+            <div style="width: 300px; background-color: #68a35dda; margin: 10px; display: flex; flex-direction: column;">
+                <h6>Nombre del producto: {{_product_id.title}}</h6>
+                <p>codigo: {{_product_id.code}}</p>
+                <p>Descripción del producto: {{_product_id.description}}</p>
+                <p>Precio del producto: {{_product_id.price}}</p>
+                <p>ID del producto: {{_product_id._id}}</p>
+            </div>
+    {{/each}}
+</div>
+<script>
+    console.log({{data}})
+</script>

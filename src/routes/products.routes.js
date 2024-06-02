@@ -8,14 +8,14 @@ const router = Router();
 
 router.get('/', async ( req, res )=>{
     const { limit, page, sort, query } = req.query;
-    let products = await newManager.getItems(limit, page, query, sort);
-    res.status(200).send({ status: 'success', payload: products});
+    let resp = await newManager.getItems(limit, page, query, sort);
+    res.status(200).send({ status: 'success', ...resp, prevLink: resp.prevLink == null? null : `/api${resp.prevLink}`, nextLink: resp.nextLink == null? null :  `/api${resp.nextLink}`});
 });
 
 router.post('/', async ( req, res )=>{
     await newManager.addItem(req.body);
-    let products = await (newManager.getItems(0));
-    res.status(200).send(products)
+    let products = await (newManager.getItems());
+    res.status(200).send({ status: 'success', ...resp, prevLink: resp.prevLink == null? null : `/api${resp.prevLink}`, nextLink: resp.nextLink == null? null :  `/api${resp.nextLink}`})
 })
 
 router.get('/:pid', async ( req, res )=>{

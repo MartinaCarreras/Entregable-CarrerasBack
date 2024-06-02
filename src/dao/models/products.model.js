@@ -12,7 +12,8 @@ const schema = new mongoose.Schema({
     price: { type: Number, required: true },
     thumbnail: { type: String, required: true },
     stock: { type: Number, required: true },
-    category: {type: String, enum: ['lacteos', 'frutas', 'deshidratado', 'carne', 'bebidas'], required: true}
+    category: {type: String, enum: ['lacteos', 'frutas', 'deshidratado', 'carne', 'bebidas'], required: true},
+    _id: {type: mongoose.Schema.Types.ObjectId, required: true}
 });
 schema.plugin(mongoosePaginate);
 

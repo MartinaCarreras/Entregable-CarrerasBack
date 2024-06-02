@@ -4,35 +4,76 @@ class MDBProductManager {
         this.model = model
     };
 
-    getItems = async ( limit, page, query, sort ) => {
-      let realLimit, realPage, realSort, realQuery;
-      limit? realLimit = limit : realLimit = 10;
-      page? realPage = page : realPage = 1;
-      query? realQuery = query : realQuery = "none";
-      sort? realSort = sort : realSort = "none";
-      if(sort) {
-      } else {
-        realSort = 'none'
+    getItems = async ( limit = 10, page = 1, query = 'none', sort = 'none', available = 'true') => {
+      let preLink, postLink;
+      let generalLink = `/products?limit=${limit}`;
+      if (query != 'none') {
+        generalLink = generalLink + `&query=${query}`;
       }
-      if (realSort == 'none') {
-        if (realQuery != 'none') {
-          this.products = await this.model.paginate({category: realQuery}, {limit: realLimit, page: realPage})
-        }else {
-          this.products = await this.model.paginate({}, {limit: realLimit, page: realPage})
-        }
-      } else {
-        if (realQuery != 'none') {
-          this.products = await this.model.paginate({category: realQuery}, {limit: realLimit, page: realPage});
-        }else {
-          this.products = await this.model.paginate({}, {limit: realLimit, page: realPage});
-        }
-        if(realSort == 'asc') {
-          this.products.docs = await this.products.docs.sort((a,b) => a.price - b.price);
-        } else if (realSort == 'desc') {
-          this.products.docs = await this.products.docs.sort((a,b)=> b.price - a.price);
-        }
+      if (sort != 'none') {
+        generalLink = generalLink + `&sort=${sort}`;
       }
-      return this.products;
+      preLink = generalLink + `&page=${+page-1}`
+      postLink = generalLink + `&page=${+page+1}`
+
+      let RealSort
+      let filtros = {}
+      let opciones = {limit: limit, page: page};
+      query != 'none'? filtros = {category: query}: filtros ;
+      available != 'true'? filtros = {...filtros, stock: {$eq: 0}}: filtros = {...filtros, stock: {$ne: 0}};
+      if (sort != 'none') {
+        if (sort == 'asc') {
+          RealSort = 1;
+        } else {
+          RealSort = -1;
+        }
+        opciones = {...opciones, sort: {price: RealSort }}
+      }
+      this.products = await this.model.paginate(filtros, opciones)
+
+
+      // if (sort == 'none') {
+      //   if (query != 'none') {
+      //     this.products = await this.model.paginate({category: query}, {limit: limit, page: page})
+      //   }else {
+      //     this.products = await this.model.paginate({}, {limit: limit, page: page})
+      //   }
+      // } else {
+      //   if (query != 'none') {
+      //     this.products = await this.model.paginate({category: query}, {limit: limit, page: page});
+      //   }else {
+      //     this.products = await this.model.paginate({}, {limit: limit, page: page});
+      //   }
+      //   if(sort == 'asc') {
+      //     this.products.docs = await this.products.docs.sort((a,b) => a.price - b.price);
+      //   } else if (sort == 'desc') {
+      //     this.products.docs = await this.products.docs.sort((a,b)=> b.price - a.price);
+      //   }
+      // }
+      let newArray = []
+      this.products.docs.forEach(product=>{
+        const temporalproduct = {_id: product._id, title: product.title, code: product.code, description: product.description, price: product.price, thumbnail: product.thumbnail, stock: product.stock, category: product.category}
+        newArray.push(temporalproduct)
+      })
+
+      console.log(limit);
+      console.log(page);
+      console.log(query);
+      console.log(sort);
+      let finishedArray = {
+        payload: newArray,
+        totalPages: this.products.totalPages,
+        prevPage: +page == 1? 'none': +page - 1,
+        nextPage: +page == this.products.totalPages? 'none': +page + 1,
+        page: this.products.page,
+        hasPrevPage: +page == 1? false: true,
+        hasNextPage: +page == this.products.totalDocs? false: true,
+        prevLink: +page == 1? null: preLink,
+        nextLink: +page == this.products.totalDocs? null: postLink
+        
+      }
+
+      return finishedArray;
     };
 
     getById = async (pid) => {

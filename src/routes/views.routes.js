@@ -1,11 +1,31 @@
 import { Router } from "express";
-import ProductManager from "../dao/ProductManager.js";
+// import ProductManager from "../dao/ProductManager.js";
+import ProductManager from "../dao/ProductManager.mdb.js";
+import CartManager from "../dao/CartManager.mdb.js";
+import model from "../dao/models/products.model.js";
+import cartModel from '../dao/models/carts.model.js'
+
 
 const router = Router();
 
+const tempProdManag = new ProductManager(model);
+const tempCartManag = new CartManager(cartModel);
+
 router.get('/', (req, res)=> {
-    const tempManag = new ProductManager()
-    res.render('home', {data: tempManag.getProducts(0)})
+    res.render('home', {data: tempProdManag.getProducts(0)})
+})
+
+router.get('/products', async (req, res)=> {
+    const { limit, page, sort, query } = req.query;
+    const tempManag = new ProductManager(model);
+    let resp = await tempManag.getItems(limit, page, sort, query);
+    res.render('products', {data: resp.payload, ...resp, cid: await tempCartManag.createCart()});
+})
+
+router.get('/carts/:cid', async (req, res)=> {
+    const {cid} = req.params
+    const resp = await tempCartManag.getItems(cid);
+    res.render('carts', {data: resp});
 })
 
 router.get('/realtimeproducts', (req, res)=>{
