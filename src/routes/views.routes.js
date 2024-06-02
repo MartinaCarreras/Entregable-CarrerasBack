@@ -16,10 +16,10 @@ router.get('/', (req, res)=> {
 })
 
 router.get('/products', async (req, res)=> {
-    const { limit, page, sort, query } = req.query;
-    const tempManag = new ProductManager(model);
-    let resp = await tempManag.getItems(limit, page, sort, query);
-    res.render('products', {data: resp.payload, ...resp, cid: await tempCartManag.createCart()});
+    let { limit, page, sort, query, available, cid } = req.query;
+    if (cid){cid = cid} else {cid = await tempCartManag.createCart()}
+    let resp = await tempProdManag.getItems(limit, page, sort, query, available, cid);
+    res.render('products', {data: resp.payload, ...resp, cid: cid});
 })
 
 router.get('/carts/:cid', async (req, res)=> {

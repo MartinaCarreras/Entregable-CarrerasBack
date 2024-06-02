@@ -4,7 +4,7 @@ class MDBProductManager {
         this.model = model
     };
 
-    getItems = async ( limit = 10, page = 1, query = 'none', sort = 'none', available = 'true') => {
+    getItems = async ( limit = 10, page = 1, query = 'none', sort = 'none', available = 'true', cid = null) => {
       let preLink, postLink;
       let generalLink = `/products?limit=${limit}`;
       if (query != 'none') {
@@ -13,6 +13,7 @@ class MDBProductManager {
       if (sort != 'none') {
         generalLink = generalLink + `&sort=${sort}`;
       }
+      cid? generalLink = generalLink + `&cid=${cid}`: generalLink;
       preLink = generalLink + `&page=${+page-1}`
       postLink = generalLink + `&page=${+page+1}`
 
@@ -56,10 +57,7 @@ class MDBProductManager {
         newArray.push(temporalproduct)
       })
 
-      console.log(limit);
-      console.log(page);
-      console.log(query);
-      console.log(sort);
+
       let finishedArray = {
         payload: newArray,
         totalPages: this.products.totalPages,

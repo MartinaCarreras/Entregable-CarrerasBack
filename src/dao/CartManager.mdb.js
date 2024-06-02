@@ -13,12 +13,14 @@ class MDBCartManager {
             products: []
         }
         await this.model.create(newCart);
-        return newCart.id
+        let nuevoCarrito = await this.model.findOne({id: newCart.id})
+        return nuevoCarrito._id
     };
     
     getItems = async ( id ) => {
-        this.cart = await this.model.findOne({id: id}).populate({path: 'products._product_id', model: productModel});
-        console.log(this.cart.products);
+        this.cart = await this.model.findById(id);
+        // this.cart = await this.model.findById(id).populate({path: 'products._product_id', model: productModel});
+        console.log(this.cart);
         let tempArray = [];
         this.cart.products.forEach(product=> {
             let tempObj = {
@@ -40,44 +42,44 @@ class MDBCartManager {
     };
     
     addItem = async ( id, pid ) => {
-        this.cart = await this.model.findOne({id: id});
+        this.cart = await this.model.findById(id);
         if (this.cart.products.length != 0) {
             const indexProduct = await this.cart.products.findIndex(product=> product._product_id == pid);
             if (indexProduct != -1) {
                 this.cart.products[indexProduct].quantity = await this.cart.products[indexProduct].quantity + 1;
                 console.log(this.cart.products);
-                await this.model.findOneAndUpdate({id: +id}, {$set: {products: this.cart.products}});
+                await this.model.findByIdAndUpdate(id, {$set: {products: this.cart.products}});
             } else {
                 let newProduct = { _product_id: pid, quantity:1 };
                 await this.cart.products.push(newProduct)
-                await this.model.findOneAndUpdate({id: +id}, {$set: {products: this.cart.products}});
+                await this.model.findByIdAndUpdate(id, {$set: {products: this.cart.products}});
             }
         } else {
             let newProduct = { _product_id: pid, quantity:1 };
             await this.cart.products.push(newProduct)
-            await this.model.findOneAndUpdate({id: +id}, {$set: {products: this.cart.products}});
+            await this.model.findByIdAndUpdate(id, {$set: {products: this.cart.products}});
         }
     }
 
     deleteItem = async ( cid, pid ) => {
-        this.cart = await this.model.findOne({id: cid});
+        this.cart = await this.model.findById(cid);
         let nuevosProducts = [];
         this.cart.products.forEach(product=> {
             if (product._product_id != pid) {
                 nuevosProducts.push(product)
             }
         })
-        this.cart = await this.model.findOneAndUpdate({id: +cid}, {$set: {products: nuevosProducts}});
+        this.cart = await this.model.findByIdAndUpdate(cid, {$set: {products: nuevosProducts}});
         return await this.getItems(cid);
     }
     
     deleteItems = async ( cid ) => {
-        this.cart = await this.model.findOneAndUpdate({id: +cid}, {$set: {products: []}});
+        this.cart = await this.model.findByIdAndUpdate(cid, {$set: {products: []}});
     }
     
     updateCart = async ( cid, body ) => {
         if (typeof body == "array") {
-            await this.model.findOneAndUpdate({id: +cid}, {$set: {products: body}});
+            await this.model.findByIdAndUpdate(cid, {$set: {products: body}});
             return this.getItems(cid);
         } else {
             return 'ERROR, su body no es compatible'
@@ -86,7 +88,7 @@ class MDBCartManager {
     
     updateProduct = async ( cid, pid, body ) => {
         if (Object.keys(body).includes('quantity')) {
-            this.cart = await this.model.findOne({id: cid});
+            this.cart = await this.model.findById(cid);
             let productsAct = []
             await this.cart.products.forEach(product => {
                 if (product._product_id != pid) {
@@ -98,7 +100,7 @@ class MDBCartManager {
                     return 'no'
                 }
             })
-            this.cart = await this.model.findOneAndUpdate({id: +cid}, {$set: {products: productsAct}});
+            this.cart = await this.model.findByIdAndUpdate(cid, {$set: {products: productsAct}});
             return await this.getItems(cid);
         } else {
             return 'ERROR. Debes ingresar un JSON con un objeto con propiedad "quantity'

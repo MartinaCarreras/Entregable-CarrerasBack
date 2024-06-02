@@ -1,5 +1,5 @@
 
-
+<h2>Tu carrito es el carrito con id {{cid}}</h2>
 
 <a href="{{prevLink}}"><button {{#if hasPrevPage}}{{else}} disabled {{/if}}>Pagina anterior</button></a>
 <div>{{page}} de {{totalPages}}</div>
@@ -19,7 +19,6 @@
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    console.log({{page}})
     const socketClient = io();
 
     let add = document.querySelectorAll(".add");
@@ -28,11 +27,11 @@
             const padre = event.target.parentElement;
             const pid = padre.id;
 
-            let url = `/api/carts/${{{cid}}}/products/${{{pid}}}`
+            let url = `/api/carts/{{cid}}/products/${pid}`;
             
             let body = {
             pid: pid,
-            cid: {{cid}}
+            cid: `${{{cid}}}`
             }
 
             let options = {
