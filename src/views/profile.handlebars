@@ -1,0 +1,20 @@
+<style>
+    body {
+        background-color: #333;
+    }
+
+    * {
+        color: rgb(168, 168, 147);
+    }
+
+</style>
+
+<h1>Perfil de usuario</h1>
+
+<h2>Usuario: {{firstName}}, {{lastName}}</h2>
+<h3>Rol: {{role}}</h3>
+<h3>Id de carrito: {{cid}}</h3>
+
+<form action="/logout" method="get">
+    <button type="submit" class="btn btn-success">Salir</button>
+</form>

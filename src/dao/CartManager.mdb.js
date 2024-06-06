@@ -7,19 +7,17 @@ class MDBCartManager {
     };
 
     createCart = async( ) => {
-        let carts = await this.model.collection.countDocuments();
         const newCart = {
-            id: carts + 1,
             products: []
         }
-        await this.model.create(newCart);
-        let nuevoCarrito = await this.model.findOne({id: newCart.id})
-        return nuevoCarrito._id
+
+        const mongoUser = await this.model.create(newCart);
+        return JSON.parse(JSON.stringify(mongoUser._id));
     };
     
     getItems = async ( id ) => {
-        this.cart = await this.model.findById(id);
-        // this.cart = await this.model.findById(id).populate({path: 'products._product_id', model: productModel});
+        // this.cart = await this.model.findById(id);
+        this.cart = await this.model.findById(id).populate({path: 'products._product_id', model: productModel});
         console.log(this.cart);
         let tempArray = [];
         this.cart.products.forEach(product=> {

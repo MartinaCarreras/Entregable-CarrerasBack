@@ -6,7 +6,6 @@ mongoose.pluralize(null);
 const collection = 'carts';
 
 const schema = new mongoose.Schema({
-    id: {type: Number, required: true},
     products: {type: [{_product_id: {type: mongoose.Schema.Types.ObjectId}, quantity: {type: Number}}], ref: 'products'}
 });
 schema.plugin(mongoosePaginate);

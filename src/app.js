@@ -7,12 +7,23 @@ import CartRoutes from './routes/carts.routes.js';
 import { config } from './config.js';
 import mongoose from 'mongoose';
 import innerSocket from './socket.js'
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 
 const app = express();
 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: config.MONGODB_URI,
+        ttl: 30000
+    }),
+    secret: 'secret_coder_53160',
+    resave: true,
+    saveUninitialized: true
+}))
 
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${config.DIRNAME}/views`);

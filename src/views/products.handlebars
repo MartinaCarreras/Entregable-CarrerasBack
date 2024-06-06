@@ -1,5 +1,4 @@
-
-<h2>Tu carrito es el carrito con id {{cid}}</h2>
+{{#if user}} <h2>Bienvenido {{user.firstName}}</h2> {{else}}<h2>Tu carrito es el carrito con id {{cid}}</h2>{{/if}}
 
 <a href="{{prevLink}}"><button {{#if hasPrevPage}}{{else}} disabled {{/if}}>Pagina anterior</button></a>
 <div>{{page}} de {{totalPages}}</div>
