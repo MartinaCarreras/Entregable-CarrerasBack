@@ -9,6 +9,7 @@ import mongoose from 'mongoose';
 import innerSocket from './socket.js'
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import passport from 'passport';
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }))
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${config.DIRNAME}/views`);

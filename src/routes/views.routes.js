@@ -6,9 +6,12 @@ import UserManager from "../dao/UserManager.mdb.js";
 import productModel from "../dao/models/products.model.js";
 import cartModel from '../dao/models/carts.model.js'
 import userModel from "../dao/models/users.model.js";
+import passport from "passport";
+import AuthConfig from '../auth/passport.config.js'
 
 
 const router = Router();
+AuthConfig();
 
 const tempProdManag = new ProductManager(productModel);
 const tempCartManag = new CartManager(cartModel);
@@ -68,13 +71,13 @@ router.get('/register', async (req,res) =>{
     }
 })
 
-router.post('/register', async (req,res) =>{
-    const {email, password, firstName, lastName, gender} = req.body;
-    let role;
-    if (email == 'adminCoder@coder.com' && password == 'adminCod3r123') {role = 'admin'}
-    let resp = await tempUserManag.register(email, password, firstName, lastName, gender, role)
-    req.session.user = resp;
-    res.redirect('/products')
+router.post('/register', passport.authenticate('register'), async (req,res) =>{
+    try {
+        req.session.user = req.user;
+        res.redirect('/products')
+    } catch {
+        res.status(500);
+    }
 });
 
 router.get('/login', async (req,res) =>{
@@ -85,17 +88,14 @@ router.get('/login', async (req,res) =>{
     }
 })
 
-router.post('/login', async (req,res) =>{
-    const { email, password } = req.body;
+router.post('/login', passport.authenticate('login'), async (req,res) =>{
     try {
-        let user = await tempUserManag.login( email, password );
-        req.session.user = user;
-        req.session.user.email = user.email;      //Esto es solo para que si user es null vaya directamente al catch
+        req.session.user = req.user;
         res.redirect('/products')
     } catch {
-        req.session.destroy()
-        res.status(500).send('Error al iniciar sesion, intente de nuevo');
+        res.status(500);
     }
+
 })
 
 router.get('/profile', async (req,res) =>{
