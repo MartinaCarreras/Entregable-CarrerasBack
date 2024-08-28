@@ -6,6 +6,23 @@
     * {
         color: rgb(168, 168, 147);
     }
+    .container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .divProducts {
+        width: 300px;
+        background-color: #bbb;
+        margin: 10px;
+        display: flex;
+        flex-direction: column;
+        border-radius: 5px;
+        color: #333;
+        p {
+            color: #333;
+        }
+    }
 
 </style>
 
@@ -15,6 +32,21 @@
 <h3>Rol: {{role}}</h3>
 <h3>Id de carrito: {{cid}}</h3>
 
-<form action="/logout" method="get">
+{{#if current }}
+    <div class="container">
+        {{#each products}}
+                <div class="divProducts">
+                    <h6>Nombre del producto: {{_product_id.title}}</h6>
+                    <p>codigo: {{_product_id.code}}</p>
+                    <p>Descripción del producto: {{_product_id.description}}</p>
+                    <p>Precio del producto: {{_product_id.price}}</p>
+                    <p>ID del producto: {{_product_id._id}}</p>
+                    <h6>Cantidad: {{quantity}}</h6>
+                </div>
+        {{/each}}
+    </div>
+{{/if}}
+
+<form action="/api/auth/logout" method="get">
     <button type="submit" class="btn btn-success">Salir</button>
 </form>

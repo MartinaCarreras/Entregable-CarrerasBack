@@ -32,25 +32,6 @@ class MDBProductManager {
       }
       this.products = await this.model.paginate(filtros, opciones)
 
-
-      // if (sort == 'none') {
-      //   if (query != 'none') {
-      //     this.products = await this.model.paginate({category: query}, {limit: limit, page: page})
-      //   }else {
-      //     this.products = await this.model.paginate({}, {limit: limit, page: page})
-      //   }
-      // } else {
-      //   if (query != 'none') {
-      //     this.products = await this.model.paginate({category: query}, {limit: limit, page: page});
-      //   }else {
-      //     this.products = await this.model.paginate({}, {limit: limit, page: page});
-      //   }
-      //   if(sort == 'asc') {
-      //     this.products.docs = await this.products.docs.sort((a,b) => a.price - b.price);
-      //   } else if (sort == 'desc') {
-      //     this.products.docs = await this.products.docs.sort((a,b)=> b.price - a.price);
-      //   }
-      // }
       let newArray = []
       this.products.docs.forEach(product=>{
         const temporalproduct = {_id: product._id, title: product.title, code: product.code, description: product.description, price: product.price, thumbnail: product.thumbnail, stock: product.stock, category: product.category}

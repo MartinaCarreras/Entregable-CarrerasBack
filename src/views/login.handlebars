@@ -21,13 +21,18 @@
     .a2:hover {
         color: #000;
     }
+    .button {
+        background-color: #ccc ;
+        border: none;
+    }
+
 </style>
 
 <div class="login-container">
     <h1><b>CODERStore</b></h1>
     <h2><b>Login de usuario</b></h2>
 
-    <form action="/login" method="post" style="margin-top: 32px;">
+    <form action="/api/auth/login" method="post" style="margin-top: 32px;">
         <div class="input-group" style="width: 300px; margin-bottom: 32px;">
             <span class="input-group-text" id="group1"><i class="fa-solid fa-user"></i></span>
             <input type="email" name="email" class="form-control" placeholder="Email" required="required" autofocus="autofocus">
@@ -39,9 +44,15 @@
         </div>
 
         <button type="submit" class="btn btn-success">Ingresar</button>
-
+        
         <div style="margin-top: 24px;">
             No tenés cuenta?: <a class="a2" href="/register">Registrate</a>
         </div>
     </form>
+    <button onclick="window.location.replace('/loGitHub')" class="button">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAA2VJREFUWEftmFmoTlEUx3/XmPEFmYUyvxgyk4SQIZk9SEIIkRDJLDMZyqyUSCIZEqJknkXKHEKKvEjmaf9v++jc3T7Dd7/vQbLevnv2Wuu31157rbVvHn+Z5P1lPPwzQK2AoUBboCpQCSgCvAHeAteA3cD5TE8gkwgVB0YBU42zeikdPQPWAZuAL2l00gINBDYAVdIY9axR5LQRRS1W0gBNA1ZATvJtNrAkjigJSCDTk3aV4Xcd4ZQonTigWUm7yRAkvHwOsNinHwU0CNjnKPQxyVkZmAg0TQnz0ObefeCkc+xDPD68eaHbJEO1Q07vGeXGod/9gZHAS+AJ8BT4Zm9fXaAWsAfYC/yyelcAlYtAntv10vsjvgiNBrY5EdDuuqeMStSyg0A/5+MYYHsS0AOzu/qO4i2geZZAl4A2jg35ahgH1AS463EsY+2yBDpqKngvjw0BCSxf3COba/62wFH6aXfxKEugaibvlDfFHDu6zcuigA4Duk1hOW16UtcsYQL1I0Bvx9ahcG65EboKtHQUVgIzcgQ039y6eXH56QIppLqyYVEBUyHLhaifrXYMvQMqRh3ZC3MNazgKm4HxuaABlgIzHVsfgTJRQDeBZo7CCaBHjoD2AwMcWxpR6kQBHQN6OgpfTfmvAHzIEqqkHd7KOXYuAB2igJQrCz2OVQ4WZQmkqUHTgysFLo2b1Cp+InblM9DZHN3lQkK1AM4BpTz6aklqTfniAum3KnXQSNUQGwHl7ZFNNk13J6BimUaKmuY73Hb8sh6Fx0CDsD1fcx1hnUpfjXaXbYAyLFFpOGU7/Rozmr53HJU28JoyNS2ooNaMIR9nHglbwt99QPrb9VAznWCBzthXRqCv0WJYhLOtgDp5nNyxPn4kAel7azNuqKEK7pMZR6rbsKqODLbzkqJwMcKj5qUDMTSakdpbHwWWxY2wk4D1dvVyT0GL231H4GzMAuViYDs1kBaqzKvcS1QOVLVfp8jmToCO2Cer4h4OSa8OGdRu1nos9wXUvX3SxSZ++JuOSfP4xrgNpQGSvurTDme6iwNSbTkecqxSohurMhIraYFkpIQ5rrH2Smsi6OaJQuBMb34l/Cv7lNKMXmCYj6LKBCiwoX8qqAHfSNisqvNt4HtSVMLfCwOUif2M1/4HSgrZb7IBlCXq0EM3AAAAAElFTkSuQmCC"/>
+    </button>
+    <div>
+        {{#if error}} <p>{{error_data}}</p> {{else}} {{/if}}
+    </div>
 </div>

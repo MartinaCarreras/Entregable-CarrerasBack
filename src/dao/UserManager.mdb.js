@@ -9,7 +9,7 @@ class MDBUserManager {
         this.model = model
     }
 
-    register = async ( email, password, firstName, lastName, gender, role ='usuario' ) => {
+    register = async ( email, password, firstName, lastName, gender = 'None', role ='usuario' ) => {
         const exists = await this.model.findOne({email: email});
         if (exists) {
             return {error: 500};
@@ -32,6 +32,7 @@ class MDBUserManager {
             return newUser;
         }
     }
+
     login = async ( email, password ) => {
         const exists = await this.model.findOne({email: email})
         let returns = {};
@@ -41,6 +42,18 @@ class MDBUserManager {
             returns = {error: 401};
         }
         return returns;
+    }
+
+    loginHub = async ( email, password, name ) => {
+        // console.log(`${email} ${password} ${name}`);
+        let result = await this.login(email, password);
+        if (Object.keys(result).includes('error')) {
+            let user = name.split(" ");
+            let lastname = user.pop();
+            result = await this.register(email, password, user.join(' '), lastname);
+        }
+        result = await this.model.findOne({email: email})
+        return result;
     }
 }
 
