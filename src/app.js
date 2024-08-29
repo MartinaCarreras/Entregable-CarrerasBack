@@ -1,6 +1,5 @@
 import express  from 'express';
 import handlebars from 'express-handlebars';
-import { Server } from 'socket.io';
 import ViewsRoutes from './routes/views.routes.js';
 import ProductRoutes from './routes/products.routes.js';
 import AuthRoutes from './routes/auth.routes.js';
@@ -15,6 +14,7 @@ import passport from 'passport';
 const app = express();
 
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
@@ -22,7 +22,7 @@ app.use(session({
         mongoUrl: config.MONGODB_URI,
         ttl: 30000
     }),
-    secret: 'secret_coder_53160',
+    secret: config.PERSONAL_SECRET,
     resave: true,
     saveUninitialized: true
 }))
