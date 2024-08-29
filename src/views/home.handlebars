@@ -1,6 +1,18 @@
-<div>
+<style>
+    .container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .divs {
+        width: 300px;
+        background-color: #68a35dda;
+        margin: 10px;
+    }
+</style>
+<div class="container">
     {{#each data.payload}}
-        <div style="width: 300px; background-color: #68a35dda;">
+        <div class="divs">
             <h6>Nombre del producto: {{title}}</h6>
             <p>ID del producto: {{id}}</p>
             <p>Precio del producto: {{price}}</p>
